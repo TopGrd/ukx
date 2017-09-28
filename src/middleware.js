@@ -8,7 +8,7 @@ function compose(...funcs) {
 
 /**
  * applyMiddleware(...middlewares)(store)
- * applyMiddleware(...middlewares)(...store, dispatch,)
+ * applyMiddleware(...middlewares)({ ...store, dispatch })
  * -> applyMiddleware(...middlewares)(createStore)(reducer, state)
  * -> applyMiddleware(...middlewares)(createStore)(reducer, state)
  */
@@ -29,10 +29,13 @@ export default function applyMiddleware(...middlewares) {
     }
     // ({ dispatch, getState }) => ()
     chain = middlewares.map(middleware => middleware(middlewareApi))
-    /* ({ dispatch, getState }) => (dipatch) => ()
-    -> ({ dispatch, getState }) => (next) => (action) => ()
-    -> (store) => (next) => (action) => () */
+    /**
+     * ({ dispatch, getState }) => (dipatch) => ()
+     * -> ({ dispatch, getState }) => (next) => (action) => ()
+     * -> (store) => (next) => (action) => ()
+     */
     dispatch = compose(...chain)(store.dispatch)
+    // return store
     return {
       ...store,
       dispatch,
